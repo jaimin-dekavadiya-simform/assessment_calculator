@@ -82,6 +82,7 @@ const functions = new Map([
         if (Math.abs(Math.cos(x)) < epsilon) {
           throw new Error("Operator Tan : Math Error");
         }
+
         return Math.tan(x);
       },
     },
@@ -129,6 +130,10 @@ const functions = new Map([
     },
   ],
 ]);
+const constants = new Map([
+  ["PI", Math.PI],
+  ["E", Math.E],
+]);
 
 function factorial(n) {
   if (n <= 1) {
@@ -138,4 +143,4 @@ function factorial(n) {
   }
 }
 
-export { operators, functions };
+export { operators, functions, constants };
