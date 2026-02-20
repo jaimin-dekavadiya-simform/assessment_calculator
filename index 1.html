@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scientific Calculator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Theme Toggle -->
+      <div class="theme-toggle">
+        <button id="themeBtn" class="theme-btn" title="Toggle Dark/Light Mode">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+      <div class="calculator-wrapper">
+        <!-- Main Calculator -->
+        <div class="calculator">
+          <div class="calculator-header">
+            <h1>Scientific Calculator</h1>
+          </div>
+
+          <!-- Display Area -->
+          <div class="display-area">
+            <div class="history-display" id="historyDisplay"></div>
+            <div class="current-display" id="currentDisplay">0</div>
+          </div>
+
+          <!-- Button Groups -->
+          <div class="button-grid">
+            <!-- Row 1: Memory & Clear Functions -->
+            <div class="button-row">
+              <button class="btn btn-function" data-action="clear">AC</button>
+              <button class="btn btn-function" data-action="delete">DEL</button>
+              <button class="btn btn-function" data-action="toggleSign">
+                +/-
+              </button>
+              <button class="btn btn-operator" data-operator="%">%</button>
+            </div>
+
+            <!-- Row 2: Scientific Functions (Top) -->
+            <div class="button-row">
+              <button class="btn btn-scientific" data-function="sin">
+                sin
+              </button>
+              <button class="btn btn-scientific" data-function="cos">
+                cos
+              </button>
+              <button class="btn btn-scientific" data-function="tan">
+                tan
+              </button>
+              <button class="btn btn-operator" data-operator="/">÷</button>
+            </div>
+
+            <!-- Row 3: Scientific Functions (Middle) -->
+            <div class="button-row">
+              <button class="btn btn-scientific" data-function="sqrt">√</button>
+              <button class="btn btn-scientific" data-function="log">
+                log
+              </button>
+              <button class="btn btn-scientific" data-function="ln">ln</button>
+              <button class="btn btn-operator" data-operator="*">×</button>
+            </div>
+
+            <!-- Row 4: Scientific Functions (Bottom) -->
+            <div class="button-row">
+              <button class="btn btn-scientific" data-function="pi">π</button>
+              <button class="btn btn-scientific" data-function="e">e</button>
+              <button class="btn btn-scientific" data-function="power">
+                x^y
+              </button>
+              <button class="btn btn-operator" data-operator="-">−</button>
+            </div>
+
+            <!-- Row 5: Numbers & Operations (1-4) -->
+            <div class="button-row">
+              <button class="btn btn-number" data-number="7">7</button>
+              <button class="btn btn-number" data-number="8">8</button>
+              <button class="btn btn-number" data-number="9">9</button>
+              <button class="btn btn-operator" data-operator="+">+</button>
+            </div>
+
+            <!-- Row 6: Numbers (4-6) -->
+            <div class="button-row">
+              <button class="btn btn-number" data-number="4">4</button>
+              <button class="btn btn-number" data-number="5">5</button>
+              <button class="btn btn-number" data-number="6">6</button>
+              <button class="btn btn-function" data-action="reciprocal">
+                1/x
+              </button>
+            </div>
+
+            <!-- Row 7: Numbers (7-9) -->
+            <div class="button-row">
+              <button class="btn btn-number" data-number="1">1</button>
+              <button class="btn btn-number" data-number="2">2</button>
+              <button class="btn btn-number" data-number="3">3</button>
+              <button class="btn btn-function" data-action="factorial">
+                n!
+              </button>
+            </div>
+
+            <!-- Row 8: Numbers (0) & Decimal -->
+            <div class="button-row">
+              <button class="btn btn-number btn-zero" data-number="0">0</button>
+              <button class="btn btn-number" data-number=".">.</button>
+              <button class="btn btn-equals" data-action="calculate">=</button>
+            </div>
+          </div>
+
+          <!-- Parentheses Help -->
+          <div class="parentheses-info">
+            <small
+              >Keyboard: Use +, -, *, /, Enter for =, Backspace for DEL, C for
+              Clear</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- History Panel -->
+      <div class="history-panel">
+        <div class="history-header">
+          <h2>Calculation History</h2>
+          <button class="btn btn-small" id="clearHistoryBtn">Clear All</button>
+        </div>
+        <div class="history-list" id="historyList">
+          <p class="empty-message">No calculations yet</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

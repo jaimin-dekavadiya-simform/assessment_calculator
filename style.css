@@ -1,0 +1,487 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-tertiary: #e8e8e8;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --border-color: #d0d0d0;
+    --display-bg: #f0f0f0;
+    --button-bg: #ffffff;
+    --button-border: #d0d0d0;
+    --button-hover: #efefef;
+    --operator-bg: #ff9500;
+    --operator-text: #ffffff;
+    --operator-hover: #e68900;
+    --function-bg: #a6a6a6;
+    --function-text: #ffffff;
+    --function-hover: #909090;
+    --equals-bg: #4caf50;
+    --equals-text: #ffffff;
+    --equals-hover: #45a049;
+    --scientific-bg: #6c757d;
+    --scientific-text: #ffffff;
+    --scientific-hover: #5a6268;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #3a3a3a;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --border-color: #444444;
+    --display-bg: #1a1a1a;
+    --button-bg: #2d2d2d;
+    --button-border: #444444;
+    --button-hover: #3a3a3a;
+    --operator-bg: #ff9500;
+    --operator-text: #ffffff;
+    --operator-hover: #e68900;
+    --function-bg: #5a5a5a;
+    --function-text: #ffffff;
+    --function-hover: #6a6a6a;
+    --equals-bg: #4caf50;
+    --equals-text: #ffffff;
+    --equals-hover: #45a049;
+    --scientific-bg: #505050;
+    --scientific-text: #ffffff;
+    --scientific-hover: #5a5a5a;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* ==================== Calculator Wrapper ==================== */
+.calculator-wrapper {
+    position: relative;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+.theme-btn {
+    background: var(--button-bg);
+    border: 1px solid var(--button-border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.theme-btn:hover {
+    background-color: var(--button-hover);
+    transform: scale(1.05);
+}
+
+/* ==================== Calculator ==================== */
+.calculator {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+}
+
+.calculator-header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.calculator-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ==================== Display Area ==================== */
+.display-area {
+    background-color: var(--display-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.history-display {
+    font-size: 14px;
+    color: var(--text-secondary);
+    min-height: 20px;
+    margin-bottom: 10px;
+    word-break: break-all;
+    text-align: right;
+}
+
+.current-display {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: right;
+    word-break: break-all;
+    min-height: 40px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+/* ==================== Button Grid ==================== */
+.button-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.button-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+/* ==================== Buttons ==================== */
+.btn {
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid var(--button-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--button-bg);
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
+}
+
+.btn:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow);
+}
+
+/* Number Buttons */
+.btn-number {
+    background-color: var(--button-bg);
+    color: var(--text-primary);
+}
+
+.btn-number:hover {
+    background-color: var(--button-hover);
+}
+
+/* Operator Buttons */
+.btn-operator {
+    background-color: var(--operator-bg);
+    color: var(--operator-text);
+    border-color: var(--operator-bg);
+    font-weight: 600;
+}
+
+.btn-operator:hover {
+    background-color: var(--operator-hover);
+    border-color: var(--operator-hover);
+}
+
+/* Function Buttons (AC, DEL, +/-, 1/x, n!) */
+.btn-function {
+    background-color: var(--function-bg);
+    color: var(--function-text);
+    border-color: var(--function-bg);
+}
+
+.btn-function:hover {
+    background-color: var(--function-hover);
+    border-color: var(--function-hover);
+}
+
+/* Scientific Function Buttons */
+.btn-scientific {
+    background-color: var(--scientific-bg);
+    color: var(--scientific-text);
+    border-color: var(--scientific-bg);
+    font-size: 14px;
+}
+
+.btn-scientific:hover {
+    background-color: var(--scientific-hover);
+    border-color: var(--scientific-hover);
+}
+
+/* Equals Button */
+.btn-equals {
+    background-color: var(--equals-bg);
+    color: var(--equals-text);
+    border-color: var(--equals-bg);
+    font-weight: 600;
+    grid-column: span 2;
+}
+
+.btn-equals:hover {
+    background-color: var(--equals-hover);
+    border-color: var(--equals-hover);
+}
+
+/* Zero Button (spans 2 columns) */
+.btn-zero {
+    grid-column: span 2;
+}
+
+/* Small Button */
+.btn-small {
+    padding: 8px 16px;
+    font-size: 12px;
+}
+
+/* ==================== Parentheses Info ==================== */
+.parentheses-info {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ==================== History Panel ==================== */
+.history-panel {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.history-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ==================== History List ==================== */
+.history-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+.history-item {
+    background-color: var(--bg-primary);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    background-color: var(--button-hover);
+    box-shadow: var(--shadow);
+}
+
+.history-item-expression {
+    font-size: 14px;
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.history-item-result {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-left: 10px;
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 30px 10px;
+    font-size: 14px;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .calculator {
+        padding: 15px;
+    }
+
+    .current-display {
+        font-size: 24px;
+    }
+
+    .button-row {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .btn-scientific {
+        font-size: 12px;
+    }
+
+    .history-panel {
+        padding: 15px;
+    }
+
+    .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .calculator {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .calculator-header h1 {
+        font-size: 20px;
+    }
+
+    .current-display {
+        font-size: 20px;
+        min-height: 35px;
+    }
+
+    .history-display {
+        font-size: 12px;
+    }
+
+    .button-row {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+
+    .btn {
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+
+    .btn-scientific {
+        font-size: 11px;
+    }
+
+    .btn-zero,
+    .btn-equals {
+        grid-column: span 2;
+    }
+
+    .theme-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+
+    .history-panel {
+        padding: 12px;
+    }
+
+    .history-header h2 {
+        font-size: 16px;
+    }
+
+    .parentheses-info {
+        font-size: 10px;
+    }
+}
+
+/* ==================== Accessibility ==================== */
+.btn:focus {
+    outline: 2px solid var(--operator-bg);
+    outline-offset: -1px;
+}
+
+body.dark-mode .btn:focus {
+    outline: 2px solid var(--operator-bg);
+}
