@@ -14,6 +14,7 @@ console.log("Division:", operators.get("/").execute(10, 2)); // 5
 
 try {
   console.log("Divide by Zero:", operators.get("/").execute(10, 0));
+  s;
 } catch (e) {
   console.log("Expected Divide Error:", e.message);
 }
