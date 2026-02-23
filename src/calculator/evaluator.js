@@ -74,7 +74,7 @@ export default class Evaluator {
   }
   #handleConstant(token) {
     this.stack.push(
-      Number(this.constants.get(token.value).toFixed(this.precision)),
+      Number(this.constants.get(token.value).value.toFixed(this.precision)),
     );
   }
 }

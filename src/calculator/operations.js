@@ -2,6 +2,8 @@ const operators = new Map([
   [
     "+",
     {
+      lexerString: "+",
+      tokenString: "+",
       precedence: 1,
       associativity: "left",
       arity: 2,
@@ -11,6 +13,8 @@ const operators = new Map([
   [
     "-",
     {
+      lexerString: "-",
+      tokenString: "-",
       precedence: 1,
       associativity: "left",
       arity: 2,
@@ -20,6 +24,8 @@ const operators = new Map([
   [
     "*",
     {
+      lexerString: "*",
+      tokenString: "*",
       precedence: 2,
       associativity: "left",
       arity: 2,
@@ -29,6 +35,8 @@ const operators = new Map([
   [
     "/",
     {
+      lexerString: "/",
+      tokenString: "/",
       precedence: 2,
       associativity: "left",
       arity: 2,
@@ -43,6 +51,8 @@ const operators = new Map([
   [
     "%",
     {
+      lexerString: "%",
+      tokenString: "%",
       precedence: 2,
       associativity: "left",
       arity: 2,
@@ -52,6 +62,8 @@ const operators = new Map([
   [
     "^",
     {
+      lexerString: "^",
+      tokenString: "^",
       precedence: 3,
       associativity: "right",
       arity: 2,
@@ -61,6 +73,8 @@ const operators = new Map([
   [
     "NEG",
     {
+      lexerString: "-",
+      tokenString: "NEG",
       precedence: 4,
       associativity: "right",
       arity: 1,
@@ -70,6 +84,8 @@ const operators = new Map([
   [
     "!",
     {
+      lexerString: "!",
+      tokenString: "!",
       precedence: 5,
       associativity: "left",
       arity: 1,
@@ -77,13 +93,32 @@ const operators = new Map([
     },
   ],
 ]);
-
 const functions = new Map([
-  ["sin", { precedence: 6, arity: 1, execute: (x) => Math.sin(x) }],
-  ["cos", { precedence: 6, arity: 1, execute: (x) => Math.cos(x) }],
+  [
+    "sin",
+    {
+      lexerString: "sin",
+      tokenString: "sin",
+      precedence: 6,
+      arity: 1,
+      execute: (x) => Math.sin(x),
+    },
+  ],
+  [
+    "cos",
+    {
+      lexerString: "cos",
+      tokenString: "cos",
+      precedence: 6,
+      arity: 1,
+      execute: (x) => Math.cos(x),
+    },
+  ],
   [
     "tan",
     {
+      lexerString: "tan",
+      tokenString: "tan",
       precedence: 6,
       arity: 1,
       execute: (x) => {
@@ -100,6 +135,8 @@ const functions = new Map([
   [
     "log",
     {
+      lexerString: "log",
+      tokenString: "log",
       precedence: 6,
       arity: 1,
       execute: (x) => {
@@ -115,6 +152,8 @@ const functions = new Map([
   [
     "ln",
     {
+      lexerString: "ln",
+      tokenString: "ln",
       precedence: 6,
       arity: 1,
       execute: (x) => {
@@ -130,6 +169,8 @@ const functions = new Map([
   [
     "sqr-root",
     {
+      lexerString: "√",
+      tokenString: "sqr-root",
       precedence: 6,
       arity: 1,
       execute: (x) => {
@@ -144,8 +185,8 @@ const functions = new Map([
   ],
 ]);
 const constants = new Map([
-  ["PI", Math.PI],
-  ["E", Math.E],
+  ["PI", { value: Math.PI, lexerString: "π", tokenString: "PI" }],
+  ["E", { value: Math.E, lexerString: "e", tokenString: "E" }],
 ]);
 
 function factorial(n) {
