@@ -1,23 +1,44 @@
 import Evaluator from "../calculator/evaluator.js";
 import { operators, functions, constants } from "../calculator/operations.js";
+
 const evaluator = new Evaluator(operators, functions, constants);
 
-console.log(
-  evaluator.evaluate([
-    { type: "CONSTANT", value: "PI" },
-    { type: "NUMBER", value: 1 },
-    { type: "OPERATOR", value: "/" },
-    { type: "FUNCTION", value: "tan" },
-  ]),
-);
-// ==========================
-// BASIC OPERATOR TESTS
-// ==========================
+// ===============================
+// TEST RUNNER
+// ===============================
 
-// 1) 5 1 2 + 4 * + 3 -  → 14
-console.log(
-  "Test 1:",
-  evaluator.evaluate([
+function runEvalTest(name, tokens, expected) {
+  try {
+    const result = evaluator.evaluate(tokens);
+
+    const isNumber = typeof result === "number";
+    const isClose =
+      isNumber && typeof expected === "number"
+        ? Math.abs(result - expected) < 1e-10
+        : result === expected;
+
+    console.log("====================================");
+    console.log("Test:", name);
+    console.log("Expected:", expected);
+    console.log("Result  :", result);
+    console.log(isClose ? "✅ PASS" : "❌ FAIL");
+  } catch (err) {
+    console.log("====================================");
+    console.log("Test:", name);
+    console.log("Expected:", expected);
+    console.log("Result  : ERROR ->", err.message);
+    console.log(expected === "ERROR" ? "✅ PASS" : "❌ FAIL");
+  }
+}
+
+// ===============================
+// BASIC OPERATOR TESTS
+// ===============================
+
+// 1) 5 1 2 + 4 * + 3 - → 14
+runEvalTest(
+  "Basic Complex Expression",
+  [
     { type: "NUMBER", value: 5 },
     { type: "NUMBER", value: 1 },
     { type: "NUMBER", value: 2 },
@@ -27,176 +48,182 @@ console.log(
     { type: "OPERATOR", value: "+" },
     { type: "NUMBER", value: 3 },
     { type: "OPERATOR", value: "-" },
-  ]),
+  ],
+  14,
 );
 
-// 2) 6 2 / 3 ^  → 27
-console.log(
-  "Test 2:",
-  evaluator.evaluate([
+// 2) 6 2 / 3 ^ → 27
+runEvalTest(
+  "Division + Power",
+  [
     { type: "NUMBER", value: 6 },
     { type: "NUMBER", value: 2 },
     { type: "OPERATOR", value: "/" },
     { type: "NUMBER", value: 3 },
     { type: "OPERATOR", value: "^" },
-  ]),
+  ],
+  27,
 );
 
 // 3) 2 3 4 + * → 14
-console.log(
-  "Test 3:",
-  evaluator.evaluate([
+runEvalTest(
+  "Nested Multiplication",
+  [
     { type: "NUMBER", value: 2 },
     { type: "NUMBER", value: 3 },
     { type: "NUMBER", value: 4 },
     { type: "OPERATOR", value: "+" },
     { type: "OPERATOR", value: "*" },
-  ]),
+  ],
+  14,
 );
 
-// ==========================
+// ===============================
 // FUNCTION TESTS
-// ==========================
+// ===============================
 
 // 4) 5 ! → 120
-console.log(
-  "Test 4:",
-  evaluator.evaluate([
+runEvalTest(
+  "Factorial",
+  [
     { type: "NUMBER", value: 5 },
     { type: "OPERATOR", value: "!" },
-  ]),
+  ],
+  120,
 );
 
-// 5) 2 root → √2
-console.log(
-  "Test 5:",
-  evaluator.evaluate([
+// 5) 2 sqrt → √2
+runEvalTest(
+  "Square Root",
+  [
     { type: "NUMBER", value: 2 },
     { type: "FUNCTION", value: "sqr-root" },
-  ]),
+  ],
+  Math.sqrt(2),
 );
 
-// ==========================
-// TRIG TESTS (Assuming degree mode)
-// ==========================
+// ===============================
+// TRIG TESTS (Radians assumed)
+// ===============================
 
 // 6) π/2 sin → 1
-console.log(
-  "Test 6 (π/2 sin):",
-  evaluator.evaluate([
+runEvalTest(
+  "Sin PI/2",
+  [
     { type: "CONSTANT", value: "PI" },
     { type: "NUMBER", value: 2 },
     { type: "OPERATOR", value: "/" },
     { type: "FUNCTION", value: "sin" },
-  ]),
+  ],
+  1,
 );
 
 // 7) π/3 cos → 0.5
-console.log(
-  "Test 7 (π/3 cos):",
-  evaluator.evaluate([
+runEvalTest(
+  "Cos PI/3",
+  [
     { type: "CONSTANT", value: "PI" },
     { type: "NUMBER", value: 3 },
     { type: "OPERATOR", value: "/" },
     { type: "FUNCTION", value: "cos" },
-  ]),
+  ],
+  0.5,
 );
 
 // 8) π/4 tan → 1
-console.log(
-  "Test 8 (π/4 tan):",
-  evaluator.evaluate([
+runEvalTest(
+  "Tan PI/4",
+  [
     { type: "CONSTANT", value: "PI" },
     { type: "NUMBER", value: 4 },
     { type: "OPERATOR", value: "/" },
     { type: "FUNCTION", value: "tan" },
-  ]),
+  ],
+  1,
 );
 
-// ==========================
+// ===============================
 // LOG TESTS
-// ==========================
+// ===============================
 
 // 9) 10 log → 1
-console.log(
-  "Test 9:",
-  evaluator.evaluate([
+runEvalTest(
+  "Log Base 10",
+  [
     { type: "NUMBER", value: 10 },
     { type: "FUNCTION", value: "log" },
-  ]),
+  ],
+  1,
 );
 
 // 10) E ln → 1
-console.log(
-  "Test 10:",
-  evaluator.evaluate([
+runEvalTest(
+  "Natural Log",
+  [
     { type: "CONSTANT", value: "E" },
     { type: "FUNCTION", value: "ln" },
-  ]),
+  ],
+  1,
 );
 
-// ==========================
+// ===============================
 // CONSTANT + OPERATOR
-// ==========================
+// ===============================
 
 // 11) PI 4 / tan → 1
-console.log(
-  "Test 11:",
-  evaluator.evaluate([
+runEvalTest(
+  "Tan PI/4 Again",
+  [
     { type: "CONSTANT", value: "PI" },
     { type: "NUMBER", value: 4 },
     { type: "OPERATOR", value: "/" },
     { type: "FUNCTION", value: "tan" },
-  ]),
+  ],
+  1,
 );
 
-// ==========================
+// ===============================
 // FRACTION TEST
-// ==========================
+// ===============================
 
 // 12) 1 3 / → 0.333...
-console.log(
-  "Test 12:",
-  evaluator.evaluate([
+runEvalTest(
+  "Fraction",
+  [
     { type: "NUMBER", value: 1 },
     { type: "NUMBER", value: 3 },
     { type: "OPERATOR", value: "/" },
-  ]),
+  ],
+  1 / 3,
 );
 
-// ==========================
+// ===============================
 // INVALID CASES
-// ==========================
+// ===============================
 
-try {
-  console.log(
-    "Test 13:",
-    evaluator.evaluate([{ type: "OPERATOR", value: "+" }]),
-  );
-} catch (e) {
-  console.log("Test 13 Error:", e.message);
-}
+// 13) Only operator
+runEvalTest("Only Operator", [{ type: "OPERATOR", value: "+" }], "ERROR");
 
-try {
-  console.log(
-    "Test 14:",
-    evaluator.evaluate([
-      { type: "NUMBER", value: 5 },
-      { type: "OPERATOR", value: "+" },
-    ]),
-  );
-} catch (e) {
-  console.log("Test 14 Error:", e.message);
-}
+// 14) Missing operand
+runEvalTest(
+  "Missing Operand",
+  [
+    { type: "NUMBER", value: 5 },
+    { type: "OPERATOR", value: "+" },
+  ],
+  "ERROR",
+);
 
-// ==========================
-// TYPE CHECK (VERY IMPORTANT)
-// ==========================
+// ===============================
+// TYPE CHECK
+// ===============================
 
-const result = evaluator.evaluate([
+const typeCheck = evaluator.evaluate([
   { type: "NUMBER", value: 2 },
   { type: "NUMBER", value: 3 },
   { type: "OPERATOR", value: "+" },
 ]);
 
-console.log("Type Check:", typeof result); // Should be "number", not "string"
+console.log("====================================");
+console.log("Type Check:", typeof typeCheck);
+console.log(typeof typeCheck === "number" ? "✅ PASS" : "❌ FAIL");
