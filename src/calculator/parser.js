@@ -4,7 +4,7 @@ import Stack from "../utils/stack.js";
 // { type: "CONSTANT", value: "E" },
 // { type: "FUNCTION", value: "ln" },
 
-class Parser {
+export default class Parser {
   constructor(operators, functions, constants) {
     this.operators = operators;
     this.functions = functions;
@@ -30,14 +30,80 @@ class Parser {
         case "CONSTANT":
           this.#handle_constant(token);
           break;
+        case "BRACKET":
+          this.#handle_bracket(token);
+          break;
         default:
           throw new Error("Parser : Token type not available");
           break;
       }
     }
+    while (!this.stack.isEmpty()) {
+      let top = this.stack.pop();
+      if (top.type === "BRACKET") {
+        throw new Error("Parser : Invalid Bracket Expression");
+      }
+      this.output.push(top);
+    }
+    return this.output;
   }
-  #handle_operator(token) {}
-  #handle_function(token) {}
-  #handle_number(token) {}
-  #handle_constant(token) {}
+  #handle_operator(token) {
+    if (this.stack.isEmpty()) {
+      this.stack.push(token);
+      return;
+    }
+    const operator = this.operators.get(token.value);
+    let top_token = this.stack.peek();
+    let top =
+      top_token.type === "OPERATOR"
+        ? this.operators.get(top_token.value)
+        : this.functions.get(top_token.value);
+    while (
+      !this.stack.isEmpty() &&
+      this.stack.peek().type !== "BRACKET" &&
+      this.#should_pop(top, operator)
+    ) {
+      this.output.push(this.stack.pop());
+      if (!this.stack.isEmpty()) {
+        top = this.operators.get(this.stack.peek().value);
+      }
+    }
+    this.stack.push(token);
+    return;
+  }
+  #handle_function(token) {
+    this.stack.push(token);
+    return;
+  }
+  #handle_number(token) {
+    this.output.push(token);
+  }
+  #handle_constant(token) {
+    this.output.push(token);
+  }
+  #handle_bracket(token) {
+    if (token.value === "(") {
+      this.stack.push(token);
+    } else {
+      while (this.stack.peek().type !== "BRACKET") {
+        this.output.push(this.stack.pop());
+        if (this.stack.isEmpty()) {
+          throw new Error("Parser  : Invalid Bracket Expression");
+        }
+      }
+      this.stack.pop();
+    }
+  }
+  #should_pop(top, operator) {
+    if (top.precedence > operator.precedence) {
+      return true;
+    } else if (top.precedence < operator.precedence) {
+      return false;
+    } else {
+      if (operator.associativity === "right") {
+        return false;
+      }
+      return true;
+    }
+  }
 }

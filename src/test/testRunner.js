@@ -3,7 +3,8 @@ async function runTest() {
 
   //await import("./stackTest.js");
   //await import("./operatorTest.js");
-  await import("./evaluatorTest.js");
+  //await import("./evaluatorTest.js");
+  await import("./parserTest.js");
   console.log("All test completed");
 }
 runTest();

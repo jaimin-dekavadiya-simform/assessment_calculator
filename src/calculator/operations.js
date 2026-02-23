@@ -41,6 +41,15 @@ const operators = new Map([
     },
   ],
   [
+    "%",
+    {
+      precedence: 2,
+      associativity: "left",
+      arity: 2,
+      execute: (a, b) => a % b,
+    },
+  ],
+  [
     "^",
     {
       precedence: 3,
@@ -70,11 +79,12 @@ const operators = new Map([
 ]);
 
 const functions = new Map([
-  ["sin", { arity: 1, execute: (x) => Math.sin(x) }],
-  ["cos", { arity: 1, execute: (x) => Math.cos(x) }],
+  ["sin", { precedence: 6, arity: 1, execute: (x) => Math.sin(x) }],
+  ["cos", { precedence: 6, arity: 1, execute: (x) => Math.cos(x) }],
   [
     "tan",
     {
+      precedence: 6,
       arity: 1,
       execute: (x) => {
         const epsilon = 1e-12;
@@ -90,6 +100,7 @@ const functions = new Map([
   [
     "log",
     {
+      precedence: 6,
       arity: 1,
       execute: (x) => {
         if (x <= 0) {
@@ -104,6 +115,7 @@ const functions = new Map([
   [
     "ln",
     {
+      precedence: 6,
       arity: 1,
       execute: (x) => {
         if (x <= 0) {
@@ -118,6 +130,7 @@ const functions = new Map([
   [
     "sqr-root",
     {
+      precedence: 6,
       arity: 1,
       execute: (x) => {
         if (x < 0) {
