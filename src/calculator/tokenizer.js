@@ -1,20 +1,4 @@
-function isDigit(char) {
-  const charCode = char.charCodeAt(0);
-  if (charCode >= 48 && charCode <= 57) {
-    return true;
-  }
-  return false;
-}
-function isNegative(tokens) {
-  if (
-    (tokens.length && tokens[tokens.length - 1].type === "CONSTANT") ||
-    tokens[tokens.length - 1].type === "NUMBER"
-  ) {
-    return false;
-  }
-  return true;
-}
-
+import { isDigit,isNegative } from "../utils/tokenizerUtils.js";
 export default class Tokenizer {
   constructor(operators, functions, constants) {
     this.operators = [...operators.values()];
@@ -23,6 +7,9 @@ export default class Tokenizer {
   }
 
   tokenize(str) {
+    if(str.length === 0){
+        throw new Error("Lexer : can not tokenize empty string")
+    }
     const tokens = [];
     const matchers = [
       this.#readNumber,
@@ -34,6 +21,10 @@ export default class Tokenizer {
     let index = 0;
     while (index < str.length) {
       let accepted = false;
+      if(str[index] === " "){
+        index++
+        continue;
+      }
       for (const matcher of matchers) {
         const res = matcher.call(this, str, index, tokens);
         if (res.accepted) {
@@ -43,7 +34,7 @@ export default class Tokenizer {
           break;
         }
       }
-      console.log(tokens);
+
       if (!accepted) {
         throw new Error("Lexer : Invalid Input");
       }
@@ -102,8 +93,8 @@ export default class Tokenizer {
           newIndex: startIndex + lexerString.length,
         };
       }
-      return { accepted: false };
     }
+    return { accepted: false };
   }
   #readParenthesis(str, startIndex) {
     let value = "";
@@ -144,7 +135,7 @@ export default class Tokenizer {
         return {
           type: "CONSTANT",
           accepted: true,
-          value: constant.parseString,
+          value: constant.tokenString,
           newIndex: startIndex + lexerString.length,
         };
       }
