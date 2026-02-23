@@ -1,9 +1,5 @@
 import Stack from "../utils/stack.js";
 
-// Example of Token Sequence.
-// { type: "CONSTANT", value: "E" },
-// { type: "FUNCTION", value: "ln" },
-
 export default class Parser {
   constructor(operators, functions, constants) {
     this.operators = operators;

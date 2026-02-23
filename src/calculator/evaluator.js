@@ -1,7 +1,7 @@
 import Stack from "../utils/stack.js";
 
 export default class Evaluator {
-  constructor(operators, functions, constants, precision = 10) {
+  constructor(operators, functions, constants, precision) {
     this.operators = operators;
     this.functions = functions;
     this.constants = constants;
