@@ -19,19 +19,19 @@ export default class Parser {
     for (const token of tokens) {
       switch (token.type) {
         case "OPERATOR":
-          this.#handle_operator(token);
+          this.#handleOperator(token);
           break;
         case "FUNCTION":
-          this.#handle_function(token);
+          this.#handleFunction(token);
           break;
         case "NUMBER":
-          this.#handle_number(token);
+          this.#handleNumber(token);
           break;
         case "CONSTANT":
-          this.#handle_constant(token);
+          this.#handleConstant(token);
           break;
         case "BRACKET":
-          this.#handle_bracket(token);
+          this.#handleBracket(token);
           break;
         default:
           throw new Error("Parser : Token type not available");
@@ -47,7 +47,7 @@ export default class Parser {
     }
     return this.output;
   }
-  #handle_operator(token) {
+  #handleOperator(token) {
     if (this.stack.isEmpty()) {
       this.stack.push(token);
       return;
@@ -61,7 +61,7 @@ export default class Parser {
     while (
       !this.stack.isEmpty() &&
       this.stack.peek().type !== "BRACKET" &&
-      this.#should_pop(top, operator)
+      this.#shouldPop(top, operator)
     ) {
       this.output.push(this.stack.pop());
       if (!this.stack.isEmpty()) {
@@ -71,17 +71,17 @@ export default class Parser {
     this.stack.push(token);
     return;
   }
-  #handle_function(token) {
+  #handleFunction(token) {
     this.stack.push(token);
     return;
   }
-  #handle_number(token) {
+  #handleNumber(token) {
     this.output.push(token);
   }
-  #handle_constant(token) {
+  #handleConstant(token) {
     this.output.push(token);
   }
-  #handle_bracket(token) {
+  #handleBracket(token) {
     if (token.value === "(") {
       this.stack.push(token);
     } else {
@@ -94,7 +94,7 @@ export default class Parser {
       this.stack.pop();
     }
   }
-  #should_pop(top, operator) {
+  #shouldPop(top, operator) {
     if (top.precedence > operator.precedence) {
       return true;
     } else if (top.precedence < operator.precedence) {
