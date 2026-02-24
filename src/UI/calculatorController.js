@@ -56,9 +56,7 @@ export default class CalculatorController {
           break;
         case "ans":
           if (this.lastAnswer !== undefined)
-            this.#updateDisplay(
-              this.#getDisplay() + " " + this.lastAnswer + " ",
-            );
+            this.#updateDisplay(this.#getDisplay() + this.lastAnswer);
           break;
         default:
           this.#updateDisplay(this.#getDisplay() + " " + data.function + " ");

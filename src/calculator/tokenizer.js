@@ -17,7 +17,7 @@ export default class Tokenizer {
       this.#readFunction,
       this.#readConstant,
     ];
-    let functionCounter = 0;
+    let functionCounter = { value: 0 };
     let index = 0;
     while (index < str.length) {
       let accepted = false;
@@ -28,17 +28,13 @@ export default class Tokenizer {
       for (const matcher of matchers) {
         const res = matcher.call(this, str, index, tokens);
         if (res.accepted) {
+          this.#implicitBefore(res, tokens);
+
           tokens.push({ type: res.type, value: res.value });
           index = res.newIndex;
           accepted = true;
-          if (res.type === "FUNCTION") {
-            tokens.push({ type: "BRACKET", value: "(" });
-            functionCounter++;
-          } else if (res.type === "NUMBER" || res.type === "CONSTANT") {
-            while (functionCounter--) {
-              tokens.push({ type: "BRACKET", value: ")" });
-            }
-          }
+          this.#implicitAfter(res, tokens, functionCounter);
+
           break;
         }
       }
@@ -49,6 +45,34 @@ export default class Tokenizer {
     }
     console.log(tokens);
     return tokens;
+  }
+  #implicitBefore(res, tokens) {
+    if (
+      res.type === "CONSTANT" ||
+      res.type === "NUMBER" ||
+      (res.type === "BRACKET" && res.value === "(")
+    ) {
+      let lastToken = tokens[tokens.length - 1];
+
+      if (
+        lastToken?.type === "NUMBER" ||
+        lastToken?.type === "CONSTANT" ||
+        (lastToken?.type === "BRACKET" && lastToken?.value === ")")
+      ) {
+        tokens.push({ type: "OPERATOR", value: "*" });
+      }
+    }
+  }
+  #implicitAfter(res, tokens, functionCounter) {
+    if (res.type === "FUNCTION") {
+      tokens.push({ type: "BRACKET", value: "(" });
+      functionCounter.value++;
+    } else if (res.type === "NUMBER" || res.type === "CONSTANT") {
+      while (functionCounter.value !== 0) {
+        functionCounter.value--;
+        tokens.push({ type: "BRACKET", value: ")" });
+      }
+    }
   }
   #readNumber(str, startIndex) {
     let i = startIndex;
