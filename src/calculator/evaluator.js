@@ -1,14 +1,13 @@
-import Stack from "../utils/stack.js";
-
 export default class Evaluator {
-  constructor(operators, functions, constants, precision) {
+  constructor(operators, functions, constants, Stack, precision) {
     this.operators = operators;
     this.functions = functions;
     this.constants = constants;
     this.precision = precision;
+    this.Stack = Stack;
   }
   evaluate(postfix) {
-    this.stack = new Stack();
+    this.stack = new this.Stack();
     if (!postfix) {
       throw new Error("Evaluation : empty postfix expression");
     }
