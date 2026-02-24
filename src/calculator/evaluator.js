@@ -7,6 +7,7 @@ export default class Evaluator {
     this.Stack = Stack;
   }
   evaluate(postfix) {
+    console.log(postfix);
     this.stack = new this.Stack();
     if (!postfix) {
       throw new Error("Evaluation : empty postfix expression");
@@ -37,13 +38,13 @@ export default class Evaluator {
   }
   #handleOperator(token) {
     if (this.stack.isEmpty()) {
-      throw new Error("Evaluation op: Invalid PostFix Expression");
+      throw new Error("Evaluation op: Invalid PostFix Expression 1");
     }
 
     const operator = this.operators.get(token.value);
 
     if (this.stack.size() < operator.arity) {
-      throw new Error("Evaluation op: Invalid PostFix Expression");
+      throw new Error("Evaluation op: Invalid PostFix Expression 2");
     }
     const operands = [];
     for (let i = 0; i < operator.arity; i++) {
@@ -55,11 +56,11 @@ export default class Evaluator {
   }
   #handleFunction(token) {
     if (this.stack.isEmpty()) {
-      throw new Error("Evaluation fn: Invalid PostFix Exression");
+      throw new Error("Evaluation fn: Invalid PostFix Exression 3");
     }
     const function_op = this.functions.get(token.value);
     if (this.stack.size() < function_op.arity) {
-      throw new Error("Evaluation fn: Invalid PostFix Expression");
+      throw new Error("Evaluation fn: Invalid PostFix Expression 4");
     }
     const operands = [];
     for (let i = 0; i < function_op.arity; i++) {

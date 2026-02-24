@@ -17,6 +17,7 @@ export default class Tokenizer {
       this.#readFunction,
       this.#readConstant,
     ];
+    let functionCounter = 0;
     let index = 0;
     while (index < str.length) {
       let accepted = false;
@@ -30,6 +31,14 @@ export default class Tokenizer {
           tokens.push({ type: res.type, value: res.value });
           index = res.newIndex;
           accepted = true;
+          if (res.type === "FUNCTION") {
+            tokens.push({ type: "BRACKET", value: "(" });
+            functionCounter++;
+          } else if (res.type === "NUMBER" || res.type === "CONSTANT") {
+            while (functionCounter--) {
+              tokens.push({ type: "BRACKET", value: ")" });
+            }
+          }
           break;
         }
       }
@@ -38,6 +47,7 @@ export default class Tokenizer {
         throw new Error("Lexer : Invalid Input");
       }
     }
+    console.log(tokens);
     return tokens;
   }
   #readNumber(str, startIndex) {

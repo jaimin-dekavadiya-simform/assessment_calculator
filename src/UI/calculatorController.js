@@ -189,8 +189,17 @@ export default class CalculatorController {
       this.lastAnswer = answer;
       this.display.innerHTML = answer;
     } catch (e) {
+      if (e.message.startsWith("Parser")) {
+        this.display.innerHTML = "Invalid Expression";
+      } else if (e.message.startsWith("Evaluation")) {
+        this.display.innerHTML = "Invalid Expression";
+      } else if (e.message.startsWith("Operator")) {
+        this.display.innerHTML = "Math Error";
+      } else {
+        this.display.innerHTML = "Something went wrong";
+      }
+      console.error(e);
       this.error = true;
-      this.display.innerHTML = e.message;
     }
   }
 }
