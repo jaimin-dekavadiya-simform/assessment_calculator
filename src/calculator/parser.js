@@ -1,9 +1,5 @@
 import Stack from "../utils/stack.js";
 
-// Example of Token Sequence.
-// { type: "CONSTANT", value: "E" },
-// { type: "FUNCTION", value: "ln" },
-
 export default class Parser {
   constructor(operators, functions, constants) {
     this.operators = operators;
@@ -13,25 +9,27 @@ export default class Parser {
   parse(tokens) {
     this.output = [];
     this.stack = new Stack();
+
+    const expectOperand = { value: true };
     if (!tokens) {
       throw new Error("Parser : Input tokens can not be zero");
     }
     for (const token of tokens) {
       switch (token.type) {
         case "OPERATOR":
-          this.#handleOperator(token);
+          this.#handleOperator(token, expectOperand);
           break;
         case "FUNCTION":
-          this.#handleFunction(token);
+          this.#handleFunction(token, expectOperand);
           break;
         case "NUMBER":
-          this.#handleNumber(token);
+          this.#handleNumber(token, expectOperand);
           break;
         case "CONSTANT":
-          this.#handleConstant(token);
+          this.#handleConstant(token, expectOperand);
           break;
         case "BRACKET":
-          this.#handleBracket(token);
+          this.#handleBracket(token, expectOperand);
           break;
         default:
           throw new Error("Parser : Token type not available");
@@ -47,7 +45,11 @@ export default class Parser {
     }
     return this.output;
   }
-  #handleOperator(token) {
+  #handleOperator(token, expectOperand) {
+    if (token.value !== "NEG" && expectOperand.value) {
+      throw new Error("Parser : Operand expected");
+    }
+    expectOperand.value = true;
     if (this.stack.isEmpty()) {
       this.stack.push(token);
       return;
@@ -71,20 +73,25 @@ export default class Parser {
     this.stack.push(token);
     return;
   }
-  #handleFunction(token) {
+  #handleFunction(token, expectOperand) {
+    expectOperand.value = true;
     this.stack.push(token);
     return;
   }
-  #handleNumber(token) {
+  #handleNumber(token, expectOperand) {
+    expectOperand.value = false;
     this.output.push(token);
   }
-  #handleConstant(token) {
+  #handleConstant(token, expectOperand) {
+    expectOperand.value = false;
     this.output.push(token);
   }
-  #handleBracket(token) {
+  #handleBracket(token, expectOperand) {
     if (token.value === "(") {
+      expectOperand.value = true;
       this.stack.push(token);
     } else {
+      expectOperand.value = false;
       while (this.stack.peek().type !== "BRACKET") {
         this.output.push(this.stack.pop());
         if (this.stack.isEmpty()) {

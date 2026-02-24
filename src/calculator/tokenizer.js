@@ -1,4 +1,4 @@
-import { isDigit,isNegative } from "../utils/tokenizerUtils.js";
+import { isDigit, isNegative } from "../utils/tokenizerUtils.js";
 export default class Tokenizer {
   constructor(operators, functions, constants) {
     this.operators = [...operators.values()];
@@ -7,8 +7,8 @@ export default class Tokenizer {
   }
 
   tokenize(str) {
-    if(str.length === 0){
-        throw new Error("Lexer : can not tokenize empty string")
+    if (str.length === 0) {
+      throw new Error("Lexer : can not tokenize empty string");
     }
     const tokens = [];
     const matchers = [
@@ -21,8 +21,8 @@ export default class Tokenizer {
     let index = 0;
     while (index < str.length) {
       let accepted = false;
-      if(str[index] === " "){
-        index++
+      if (str[index] === " " || str[index] == "\n" || str[index] == "\t") {
+        index++;
         continue;
       }
       for (const matcher of matchers) {

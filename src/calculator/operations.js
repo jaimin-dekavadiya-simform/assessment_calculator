@@ -64,7 +64,7 @@ const operators = new Map([
     {
       lexerString: "^",
       tokenString: "^",
-      precedence: 3,
+      precedence: 4,
       associativity: "right",
       arity: 2,
       execute: (a, b) => Math.pow(a, b),
@@ -75,7 +75,7 @@ const operators = new Map([
     {
       lexerString: "-",
       tokenString: "NEG",
-      precedence: 4,
+      precedence: 3,
       associativity: "right",
       arity: 1,
       execute: (a) => -a,
