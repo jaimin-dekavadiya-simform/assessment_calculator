@@ -42,13 +42,10 @@ export default class Calculator {
     } catch (e) {
       throw new Error("Calc : Error loading the calculator " + e.message);
     }
-    try {
-      const inFixExpression = tokenizer.tokenize(str);
-      const postFixExpression = parser.parse(inFixExpression);
-      const answer = evaluator.evaluate(postFixExpression);
-      return answer;
-    } catch (e) {
-      throw new Error("Error - " + e.message);
-    }
+
+    const inFixExpression = tokenizer.tokenize(str);
+    const postFixExpression = parser.parse(inFixExpression);
+    const answer = evaluator.evaluate(postFixExpression);
+    return answer;
   }
 }

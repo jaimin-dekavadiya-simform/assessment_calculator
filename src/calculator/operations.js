@@ -86,7 +86,7 @@ const operators = new Map([
     {
       lexerString: "!",
       tokenString: "!",
-      precedence: 5,
+      precedence: 6,
       associativity: "left",
       arity: 1,
       execute: (a) => factorial(a),
@@ -99,7 +99,7 @@ const functions = new Map([
     {
       lexerString: "sin",
       tokenString: "sin",
-      precedence: 6,
+      precedence: 5,
       arity: 1,
       execute: (x) => Math.sin(x),
     },
@@ -109,7 +109,7 @@ const functions = new Map([
     {
       lexerString: "cos",
       tokenString: "cos",
-      precedence: 6,
+      precedence: 5,
       arity: 1,
       execute: (x) => Math.cos(x),
     },
@@ -119,7 +119,7 @@ const functions = new Map([
     {
       lexerString: "tan",
       tokenString: "tan",
-      precedence: 6,
+      precedence: 5,
       arity: 1,
       execute: (x) => {
         const epsilon = 1e-12;
@@ -137,7 +137,7 @@ const functions = new Map([
     {
       lexerString: "log",
       tokenString: "log",
-      precedence: 6,
+      precedence: 5,
       arity: 1,
       execute: (x) => {
         if (x <= 0) {
@@ -154,7 +154,7 @@ const functions = new Map([
     {
       lexerString: "ln",
       tokenString: "ln",
-      precedence: 6,
+      precedence: 5,
       arity: 1,
       execute: (x) => {
         if (x <= 0) {
@@ -171,7 +171,7 @@ const functions = new Map([
     {
       lexerString: "√",
       tokenString: "sqr-root",
-      precedence: 6,
+      precedence: 5,
       arity: 1,
       execute: (x) => {
         if (x < 0) {
