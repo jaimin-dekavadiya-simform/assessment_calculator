@@ -1,7 +1,7 @@
 import Evaluator from "../calculator/evaluator.js";
 import { operators, functions, constants } from "../calculator/operations.js";
 import Stack from "../utils/stack.js";
-const evaluator = new Evaluator(operators, functions, constants, Stack);
+const evaluator = new Evaluator(operators, functions, constants, Stack, 15);
 
 // ===============================
 // TEST RUNNER
