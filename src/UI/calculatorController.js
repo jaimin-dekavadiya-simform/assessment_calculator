@@ -193,8 +193,10 @@ export default class CalculatorController {
         this.display.innerHTML = "Invalid Expression";
       } else if (e.message.startsWith("Operator")) {
         this.display.innerHTML = "Math Error";
+      } else if (e.message.startsWith("Lexer")) {
+        this.display.innerHTML = "Invalid Input";
       } else {
-        this.display.innerHTML = "Something went wrong";
+        this.display.innerHTML = "Something Went Wrong";
       }
       console.error(e);
       this.error = true;
