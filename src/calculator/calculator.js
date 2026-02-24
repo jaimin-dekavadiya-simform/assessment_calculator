@@ -48,7 +48,7 @@ export default class Calculator {
       const answer = evaluator.evaluate(postFixExpression);
       return answer;
     } catch (e) {
-      throw new Error("Error - " + e.message);
+      throw new Error("Error " + e.message);
     }
   }
 }
