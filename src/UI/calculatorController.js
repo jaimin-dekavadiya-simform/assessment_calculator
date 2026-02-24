@@ -7,7 +7,7 @@ function isDigit(char) {
 }
 
 export default class CalculatorController {
-  constructor(Stack, calculator, view) {
+  constructor(Stack, History, calculator, view) {
     this.calculator = calculator;
     this.handleClick = this.handleClick.bind(this);
     this.display = view
@@ -20,8 +20,9 @@ export default class CalculatorController {
     this.buttons.addEventListener("click", this.handleClick);
     this.error = false;
     this.empty = true;
+    this.history = new History("calc-1");
     this.lastAnswer;
-
+    this.historyPanel = view.getElementsByClassName("history-panel")[0];
     this.actions = {
       clear: this.#clearDisplay,
       delete: this.#deleteChar,
@@ -29,6 +30,11 @@ export default class CalculatorController {
       reciprocal: this.#reciprocal,
       calculate: this.#handleSubmit,
     };
+    this.allowSubmit = false;
+    this.historyPanel
+      .querySelector("#clearHistoryBtn")
+      .addEventListener("click", this.#clearHistory.bind(this));
+    this.#displayHistory();
   }
   handleClick(e) {
     this.#clearError();
@@ -39,8 +45,10 @@ export default class CalculatorController {
     } else if (data.number) {
       this.#updateDisplay(this.#getDisplay() + data.number);
     } else if (data.operator) {
+      this.allowSubmit = true;
       this.#updateDisplay(this.#getDisplay() + " " + data.operator + " ");
     } else if (data.function) {
+      this.allowSubmit = true;
       switch (data.function) {
         case "pi":
           this.#updateDisplay(this.#getDisplay() + " π ");
@@ -63,6 +71,7 @@ export default class CalculatorController {
           break;
       }
     } else if (data.bracket) {
+      this.allowSubmit = true;
       switch (data.bracket) {
         case "left":
           this.#updateDisplay(this.#getDisplay() + " ( ");
@@ -175,17 +184,27 @@ export default class CalculatorController {
   }
   #clearError() {
     if (this.error) {
-      this.display.innerHTML = "";
+      this.empty = true;
+      this.display.innerHTML = "0";
     }
     this.error = false;
   }
   #handleSubmit() {
+    this.#clearError();
     const str = this.display.innerHTML;
+    if (!this.allowSubmit) {
+      return;
+    }
     try {
       const answer = this.calculator.calculate(str);
       this.historyDisplay.innerHTML = this.display.innerHTML;
       this.lastAnswer = answer;
       this.display.innerHTML = answer;
+      if (!this.empty) {
+        this.history.push({ expression: str, answer: answer });
+      }
+      this.allowSubmit = false;
+      this.#displayHistory.call(this);
     } catch (e) {
       if (e.message.startsWith("Parser")) {
         this.display.innerHTML = "Invalid Expression";
@@ -201,5 +220,35 @@ export default class CalculatorController {
       console.error(e);
       this.error = true;
     }
+  }
+  #displayHistory() {
+    const historyListElement =
+      this.historyPanel.getElementsByClassName("history-list")[0];
+    const historyItems = this.history.getItems();
+    historyListElement.innerHTML = "";
+    console.log(historyItems);
+    if (!historyItems) {
+      historyListElement.innerHTML = `<p class="empty-message">No calculations yet</p>`;
+    }
+    for (const item of historyItems) {
+      const listElement = document.createElement("div");
+      listElement.className = "history-item";
+
+      const expressionElement = document.createElement("div");
+      expressionElement.className = "history-item-expression";
+      expressionElement.innerHTML = item.expression;
+
+      const resultElement = document.createElement("div");
+      resultElement.className = "history-item-result";
+      resultElement.innerHTML = item.answer;
+      listElement.appendChild(expressionElement);
+      listElement.appendChild(resultElement);
+
+      historyListElement.appendChild(listElement);
+    }
+  }
+  #clearHistory() {
+    this.history.clear();
+    this.#displayHistory();
   }
 }

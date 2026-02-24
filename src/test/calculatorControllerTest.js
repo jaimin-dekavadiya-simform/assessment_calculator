@@ -5,6 +5,7 @@ import Parser from "../calculator/parser.js";
 import Tokenizer from "../calculator/tokenizer.js";
 import { operators, functions, constants } from "../calculator/operations.js";
 import Stack from "../utils/stack.js";
+import History from "../calculator/history.js";
 const calculator = new Calculator(
   Evaluator,
   Parser,
@@ -18,4 +19,9 @@ const calculator = new Calculator(
 
 const view = document.getElementsByClassName("container")[0];
 
-const calculatorController = new CalculatorController(Stack, calculator, view);
+const calculatorController = new CalculatorController(
+  Stack,
+  History,
+  calculator,
+  view,
+);
