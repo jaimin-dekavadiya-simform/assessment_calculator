@@ -1,14 +1,13 @@
-import Stack from "../utils/stack.js";
-
 export default class Parser {
-  constructor(operators, functions, constants) {
+  constructor(operators, functions, constants, Stack) {
     this.operators = operators;
     this.functions = functions;
     this.constants = constants;
+    this.Stack = Stack;
   }
   parse(tokens) {
     this.output = [];
-    this.stack = new Stack();
+    this.stack = new this.Stack();
 
     const expectOperand = { value: true };
     if (!tokens) {

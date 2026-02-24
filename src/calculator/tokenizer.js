@@ -1,4 +1,3 @@
-import { isDigit, isNegative } from "../utils/tokenizerUtils.js";
 export default class Tokenizer {
   constructor(operators, functions, constants) {
     this.operators = [...operators.values()];
@@ -44,7 +43,7 @@ export default class Tokenizer {
   #readNumber(str, startIndex) {
     let i = startIndex;
     let decimalFlag = false;
-    while (i < str.length && (isDigit(str[i]) || str[i] === ".")) {
+    while (i < str.length && (this.#isDigit(str[i]) || str[i] === ".")) {
       if (str[i] === ".") {
         if (decimalFlag) {
           throw new Error("Lexer : Number Format not allowed");
@@ -67,7 +66,7 @@ export default class Tokenizer {
   }
   #readOperator(str, startIndex, tokens) {
     if (str[startIndex] === "-") {
-      if (isNegative(tokens)) {
+      if (this.#isNegative(tokens)) {
         return {
           accepted: true,
           type: "OPERATOR",
@@ -143,5 +142,24 @@ export default class Tokenizer {
     return {
       accepted: false,
     };
+  }
+  #isDigit(char) {
+    const charCode = char.charCodeAt(0);
+    if (charCode >= 48 && charCode <= 57) {
+      return true;
+    }
+    return false;
+  }
+  #isNegative(tokens) {
+    if (tokens.length === 0) {
+      return true;
+    } else if (
+      tokens[tokens.length - 1].type === "CONSTANT" ||
+      tokens[tokens.length - 1].type === "NUMBER" ||
+      tokens[tokens.length - 1].value === ")"
+    ) {
+      return false;
+    }
+    return true;
   }
 }

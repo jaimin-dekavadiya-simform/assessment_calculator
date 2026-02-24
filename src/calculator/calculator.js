@@ -3,6 +3,7 @@ export default class Calculator {
     Evaluator,
     Parser,
     Tokenizer,
+    Stack,
     operators,
     functions,
     constants,
@@ -15,6 +16,7 @@ export default class Calculator {
     this.functions = functions;
     this.constants = constants;
     this.precision = precision;
+    this.Stack = Stack;
   }
   calculate(str) {
     let evaluator, parser, tokenizer;
@@ -23,9 +25,15 @@ export default class Calculator {
         this.operators,
         this.functions,
         this.constants,
+        this.Stack,
         this.precision,
       );
-      parser = new this.Parser(this.operators, this.functions, this.constants);
+      parser = new this.Parser(
+        this.operators,
+        this.functions,
+        this.constants,
+        this.Stack,
+      );
       tokenizer = new this.Tokenizer(
         this.operators,
         this.functions,
