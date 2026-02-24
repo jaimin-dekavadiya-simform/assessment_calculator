@@ -1,7 +1,7 @@
 import { operators, functions, constants } from "../calculator/operations.js";
 import Parser from "../calculator/parser.js";
-
-const parser = new Parser(operators, functions, constants);
+import Stack from "../utils/stack.js";
+const parser = new Parser(operators, functions, constants, Stack);
 
 // ===============================
 // TEST RUNNER FOR YOUR PARSER
