@@ -43,7 +43,7 @@ export default class Tokenizer {
         throw new Error("Lexer : Invalid Input");
       }
     }
-    console.log(tokens);
+
     return tokens;
   }
   #implicitBefore(res, tokens) {
