@@ -1,3 +1,23 @@
+// Mathematical operators, functions and constants used by the calculator.
+//
+// - lexerString: the exact characters as they appear in user input (or on buttons).
+//   Use this for the lexical phase to recognize symbols (e.g. "π", "√", "-", "sin").
+//
+// - tokenString: a normalized internal token name used by the parser/evaluator.
+//   Use this to distinguish e.g. unary minus ("NEG") from binary "-" or map
+//   a visible symbol to a unique identifier.
+//
+// Each map entry has:
+//   - precedence: numeric precedence for parsing (higher binds tighter)
+//   - associativity: "left" | "right" (for binary operators)
+//   - arity: number of operands (1 or 2)
+//   - execute: function performing the operation
+//
+// To add/edit/delete operators or functions: update the corresponding Map below.
+// Example: to add a new operator, insert a new [ "⊕", { lexerString: "⊕", tokenString: "xor", precedence: 1, associativity: "left", arity: 2, execute: (a,b)=>... } ]
+// This will automatically be supported by the calculator without any changes to the parser/evaluator.
+// UI changes (e.g. new buttons) should be handled separately in the UI code.
+
 const operators = new Map([
   [
     "+",
@@ -188,13 +208,5 @@ const constants = new Map([
   ["PI", { value: Math.PI, lexerString: "π", tokenString: "PI" }],
   ["E", { value: Math.E, lexerString: "e", tokenString: "E" }],
 ]);
-
-function factorial(n) {
-  if (n <= 1) {
-    return 1;
-  } else {
-    return n * factorial(n - 1);
-  }
-}
 
 export { operators, functions, constants };

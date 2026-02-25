@@ -18,6 +18,7 @@ export default class Calculator {
     this.precision = precision;
     this.Stack = Stack;
   }
+  // This method takes the input string and returns the evaluated answer.
   calculate(str) {
     let evaluator, parser, tokenizer;
     try {
@@ -42,9 +43,11 @@ export default class Calculator {
     } catch (e) {
       throw new Error("Calc : Error loading the calculator " + e.message);
     }
-
+    // String to Infix
     const inFixExpression = tokenizer.tokenize(str);
+    // Infix to Postfix
     const postFixExpression = parser.parse(inFixExpression);
+    // Postfix to Answer
     const answer = evaluator.evaluate(postFixExpression);
     return answer;
   }
