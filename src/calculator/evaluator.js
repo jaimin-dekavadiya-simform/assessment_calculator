@@ -1,4 +1,8 @@
+// Simple evaluator for postfix (RPN) token arrays.
+// Uses provided operator/function/constant registries and a Stack.
 export default class Evaluator {
+  // operators, functions, constants: Maps used during evaluation
+  // Stack: stack implementation class; precision: decimal places to round to
   constructor(operators, functions, constants, Stack, precision) {
     this.operators = operators;
     this.functions = functions;
@@ -6,6 +10,8 @@ export default class Evaluator {
     this.precision = precision;
     this.Stack = Stack;
   }
+
+  // Evaluate a postfix token array and return the numeric result.
   evaluate(postfix) {
     this.stack = new this.Stack();
     if (!postfix) {
@@ -35,6 +41,8 @@ export default class Evaluator {
     }
     return this.stack.pop();
   }
+
+  // Handle operator token: pop operands, run operator, push result.
   #handleOperator(token) {
     if (this.stack.isEmpty()) {
       throw new Error("Evaluation op: Invalid PostFix Expression 1");
@@ -53,6 +61,8 @@ export default class Evaluator {
     const answer = operator.execute(...operands);
     this.stack.push(Number(answer.toFixed(this.precision)));
   }
+
+  // Handle function token: pop operands, call function, push result.
   #handleFunction(token) {
     if (this.stack.isEmpty()) {
       throw new Error("Evaluation fn: Invalid PostFix Exression 3");
@@ -68,9 +78,13 @@ export default class Evaluator {
     const answer = function_op.execute(...operands);
     this.stack.push(Number(answer.toFixed(this.precision)));
   }
+
+  // Handle numeric token: push rounded number onto stack.
   #handleNumber(token) {
     this.stack.push(Number(token.value.toFixed(this.precision)));
   }
+
+  // Handle constant token: lookup constant value and push it.
   #handleConstant(token) {
     this.stack.push(
       Number(this.constants.get(token.value).value.toFixed(this.precision)),
