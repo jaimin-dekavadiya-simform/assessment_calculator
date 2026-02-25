@@ -21,7 +21,11 @@ export default class CalculatorController {
     this.allowSubmit = false;
     this.#displayHistory();
   }
+  #changeTheme(e) {
+    document.getElementsByTagName("body")[0].classList.toggle("dark-mode");
+  }
   #initDom() {
+    this.themeBtn = this.view.getElementsByClassName("theme-btn")[0];
     this.display = this.view
       .getElementsByClassName("display-area")[0]
       .getElementsByClassName("current-display")[0];
@@ -32,6 +36,7 @@ export default class CalculatorController {
     this.historyPanel = this.view.getElementsByClassName("history-panel")[0];
   }
   #initClickHandlers() {
+    this.themeBtn.addEventListener("click", this.#changeTheme.bind(this));
     this.buttons.addEventListener("click", this.#handleClick.bind(this));
     this.historyPanel
       .querySelector("#clearHistoryBtn")
@@ -75,7 +80,6 @@ export default class CalculatorController {
           data.function = "ans";
           break;
         default:
-          console.log("key not recognized");
           return;
       }
     }
