@@ -58,7 +58,10 @@ export default class Parser {
     if (token.value !== "NEG" && expectOperand.value) {
       throw new Error("Parser : Operand expected");
     }
-    expectOperand.value = true;
+    if (token.value !== "!") {
+      expectOperand.value = true;
+    }
+
     if (this.stack.isEmpty()) {
       this.stack.push(token);
       return;
