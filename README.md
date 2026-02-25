@@ -4,6 +4,10 @@
 
 This project is an assessment implementing modular, extensible scientific calculator built with JavaScript. It supports a wide range of arithmetic and scientific operations, including trigonometric, logarithmic, and power functions. The codebase is designed with object-oriented principles and loose coupling, making it easy to maintain, extend, and test.
 
+## Live demo
+
+- [Click Here to Try the Calculator](https://jaimin-dekavadiya-simform.github.io/assessment_calculator/)
+
 ## Features
 
 - **Basic Arithmetic:** Addition, subtraction, multiplication, division, modulus.
@@ -29,7 +33,7 @@ This project is an assessment implementing modular, extensible scientific calcul
 **Workflow Diagram:**
 
 ```
-User Input → Tokenizer → Parser (RPN) → Evaluator → Result Display & History
+[User Input]  →  [Tokenizer]  →  [Parser](RPN)  →  [Evaluator]  →  [Controller]  →  [UI]
 ```
 
 ## How to Run
@@ -53,6 +57,14 @@ User Input → Tokenizer → Parser (RPN) → Evaluator → Result Display & His
      to
      ```html
      <script src="src/test/testRunner.js" type="module" defer></script>
+     ```
+   - Uncomment the Tests you want to run inside `testRunner.js` file inside `test` Folder.
+     ```javascript
+     // await import("./sampleTest.js");
+     ```
+     to
+     ```javascript
+     await import("./sampleTest.js");
      ```
    - Reload the page to see test results in the browser console.
 
@@ -145,9 +157,3 @@ Light theme:
 Dark theme:
 
 ![Dark theme](assets/dark-theme.png)
-
-## Running Unit Tests
-
-1. Uncomment the test runner script in `index 1.html` as described above.
-2. Uncomment the Tests you want to run inside `testRunner.js` file inside `test` Folder.
-3. Open the HTML file in your browser and check the console for test results.
