@@ -34,6 +34,9 @@ export default class CalculatorController {
     this.historyPanel
       .querySelector("#clearHistoryBtn")
       .addEventListener("click", this.#clearHistory.bind(this));
+    this.historyPanel
+      .getElementsByClassName("history-list")[0]
+      .addEventListener("click", this.#handleHistoryClick.bind(this));
     this.#displayHistory();
   }
   handleClick(e) {
@@ -250,5 +253,8 @@ export default class CalculatorController {
   #clearHistory() {
     this.history.clear();
     this.#displayHistory();
+  }
+  #handleHistoryClick(e) {
+    console.log(e.target);
   }
 }
