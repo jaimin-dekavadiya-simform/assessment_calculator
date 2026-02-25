@@ -1,28 +1,16 @@
-function isDigit(char) {
-  const charCode = char.charCodeAt(0);
-  if (charCode >= 48 && charCode <= 57) {
-    return true;
-  }
-  return false;
-}
+import { isDigit } from "../utils/uitls.js";
 
 export default class CalculatorController {
   constructor(Stack, History, calculator, view) {
+    this.view = view;
     this.calculator = calculator;
-    this.handleClick = this.handleClick.bind(this);
-    this.display = view
-      .getElementsByClassName("display-area")[0]
-      .getElementsByClassName("current-display")[0];
-    this.historyDisplay = view
-      .getElementsByClassName("display-area")[0]
-      .getElementsByClassName("history-display")[0];
-    this.buttons = view.getElementsByClassName("button-grid")[0];
-    this.buttons.addEventListener("click", this.handleClick);
+    this.history = new History("calc-1");
+    this.#initDom();
+    this.#initClickHandlers();
+    this.#initKeyHandlers();
     this.error = false;
     this.empty = true;
-    this.history = new History("calc-1");
     this.lastAnswer;
-    this.historyPanel = view.getElementsByClassName("history-panel")[0];
     this.actions = {
       clear: this.#clearDisplay,
       delete: this.#deleteChar,
@@ -31,6 +19,20 @@ export default class CalculatorController {
       calculate: this.#handleSubmit,
     };
     this.allowSubmit = false;
+    this.#displayHistory();
+  }
+  #initDom() {
+    this.display = this.view
+      .getElementsByClassName("display-area")[0]
+      .getElementsByClassName("current-display")[0];
+    this.historyDisplay = this.view
+      .getElementsByClassName("display-area")[0]
+      .getElementsByClassName("history-display")[0];
+    this.buttons = this.view.getElementsByClassName("button-grid")[0];
+    this.historyPanel = this.view.getElementsByClassName("history-panel")[0];
+  }
+  #initClickHandlers() {
+    this.buttons.addEventListener("click", this.#handleClick.bind(this));
     this.historyPanel
       .querySelector("#clearHistoryBtn")
       .addEventListener("click", this.#clearHistory.bind(this));
@@ -39,13 +41,53 @@ export default class CalculatorController {
       .addEventListener("click", this.#handleHistoryClick.bind(this), {
         capturing: true,
       });
-    this.#displayHistory();
   }
-  handleClick(e) {
+  #initKeyHandlers() {
+    document.addEventListener("keydown", this.#handleKeyDown.bind(this));
+  }
+  #handleKeyDown(e) {
+    const key = e.key;
+    const data = {};
+    if (isDigit(key)) {
+      data.number = key;
+    } else if (["+", "-", "*", "/", "%"].includes(key)) {
+      data.operator = key;
+    } else if (["(", ")"].includes(key)) {
+      data.bracket = key === "(" ? "left" : "right";
+    } else {
+      switch (key) {
+        case "Enter":
+          data.action = "calculate";
+          break;
+        case "c":
+          data.action = "clear";
+          break;
+        case "Backspace":
+          data.action = "delete";
+          break;
+        case ".":
+          data.number = ".";
+          break;
+        case "^":
+          data.function = "power";
+          break;
+        case "a":
+          data.function = "ans";
+          break;
+        default:
+          console.log("key not recognized");
+          return;
+      }
+    }
+    this.#handleInput(data);
+  }
+  #handleClick(e) {
     this.#clearError();
     const data = e.target.dataset;
+    this.#handleInput(data);
+  }
+  #handleInput(data) {
     if (data.action) {
-      console.log(data.action);
       this.actions[data.action].apply(this);
     } else if (data.number) {
       this.#updateDisplay(this.#getDisplay() + data.number);
@@ -85,8 +127,11 @@ export default class CalculatorController {
           this.#updateDisplay(this.#getDisplay() + " ) ");
           break;
       }
+    } else {
+      console.error("Invalid Click");
     }
   }
+
   #reciprocal() {
     let str = this.display.innerHTML;
     if (isDigit(str[str.length - 1])) {

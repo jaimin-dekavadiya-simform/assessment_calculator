@@ -7,7 +7,6 @@ export default class Evaluator {
     this.Stack = Stack;
   }
   evaluate(postfix) {
-    console.log(postfix);
     this.stack = new this.Stack();
     if (!postfix) {
       throw new Error("Evaluation : empty postfix expression");
