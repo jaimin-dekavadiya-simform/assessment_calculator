@@ -124,18 +124,21 @@ export default class CalculatorController {
       this.allowSubmit = true;
       this.#updateDisplay(this.#getDisplay() + " " + data.operator + " ");
     } else if (data.function) {
-      this.allowSubmit = true;
       switch (data.function) {
         case "pi":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " π ");
           break;
         case "sqrt":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " √ ");
           break;
         case "power":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " ^ ");
           break;
         case "factorial":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " ! ");
           break;
         case "ans":
@@ -143,6 +146,7 @@ export default class CalculatorController {
             this.#updateDisplay(this.#getDisplay() + this.lastAnswer);
           break;
         default:
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " " + data.function + " ");
           break;
       }
@@ -167,12 +171,8 @@ export default class CalculatorController {
     let str = this.display.innerHTML;
     if (isDigit(str[str.length - 1])) {
       let index = str.lastIndexOf(" ");
-      if (str[index + 1] === "-") {
-        str = str.slice(0, index + 1) + str.slice(index + 2);
-      } else {
-        str =
-          str.slice(0, index + 1) + " 1 / ( " + str.slice(index + 1) + " ) ";
-      }
+
+      str = str.slice(0, index + 1) + " 1 / ( " + str.slice(index + 1) + " ) ";
     } else if (str[str.length - 1] === " " && str[str.length - 2] === ")") {
       let index = str.length - 3;
       let openingBracketIndex;
@@ -186,13 +186,10 @@ export default class CalculatorController {
         index--;
       }
       if (counter === 0) {
-        if (str[index - 1] === "-") {
-          str = str.slice(0, index - 1) + str.slice(index);
-        } else {
-          str = str.slice(0, index) + " 1 / " + str.slice(index);
-        }
+        str = str.slice(0, index) + " 1 / " + str.slice(index);
       }
     }
+    this.allowSubmit = true;
     this.display.innerHTML = str;
   }
 
