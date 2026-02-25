@@ -36,7 +36,9 @@ export default class CalculatorController {
       .addEventListener("click", this.#clearHistory.bind(this));
     this.historyPanel
       .getElementsByClassName("history-list")[0]
-      .addEventListener("click", this.#handleHistoryClick.bind(this));
+      .addEventListener("click", this.#handleHistoryClick.bind(this), {
+        capturing: true,
+      });
     this.#displayHistory();
   }
   handleClick(e) {
@@ -140,9 +142,9 @@ export default class CalculatorController {
       }
       if (counter === 0) {
         if (str[index - 1] === "-") {
-          str = str.slice(0, index - 1) + str.slice(index);
+          str = str.slice(0, index - 1) + str.slice(index + 1);
         } else {
-          str = str.slice(0, index) + "-" + str.slice(index);
+          str = str.slice(0, index) + " -" + str.slice(index);
         }
       }
     }
@@ -228,10 +230,12 @@ export default class CalculatorController {
     const historyListElement =
       this.historyPanel.getElementsByClassName("history-list")[0];
     const historyItems = this.history.getItems();
+
     historyListElement.innerHTML = "";
-    console.log(historyItems);
+
     if (!historyItems) {
       historyListElement.innerHTML = `<p class="empty-message">No calculations yet</p>`;
+      return;
     }
     for (const item of historyItems) {
       const listElement = document.createElement("div");
@@ -255,6 +259,12 @@ export default class CalculatorController {
     this.#displayHistory();
   }
   #handleHistoryClick(e) {
-    console.log(e.target);
+    const expression =
+      e.target.closest(".history-item")?.firstElementChild.innerHTML;
+    if (expression) {
+      this.display.innerHTML = expression;
+      this.empty = false;
+      this.allowSubmit = true;
+    }
   }
 }
