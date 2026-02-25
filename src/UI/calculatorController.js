@@ -80,6 +80,7 @@ export default class CalculatorController {
       }
     }
     this.#handleInput(data);
+    e.preventDefault();
   }
   #handleClick(e) {
     this.#clearError();
@@ -88,7 +89,7 @@ export default class CalculatorController {
   }
   #handleInput(data) {
     if (data.action) {
-      this.actions[data.action].apply(this);
+      this.actions[data.action].call(this);
     } else if (data.number) {
       this.#updateDisplay(this.#getDisplay() + data.number);
     } else if (data.operator) {
