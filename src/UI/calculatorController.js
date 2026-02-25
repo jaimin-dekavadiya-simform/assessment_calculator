@@ -124,18 +124,21 @@ export default class CalculatorController {
       this.allowSubmit = true;
       this.#updateDisplay(this.#getDisplay() + " " + data.operator + " ");
     } else if (data.function) {
-      this.allowSubmit = true;
       switch (data.function) {
         case "pi":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " π ");
           break;
         case "sqrt":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " √ ");
           break;
         case "power":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " ^ ");
           break;
         case "factorial":
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " ! ");
           break;
         case "ans":
@@ -143,6 +146,7 @@ export default class CalculatorController {
             this.#updateDisplay(this.#getDisplay() + this.lastAnswer);
           break;
         default:
+          this.allowSubmit = true;
           this.#updateDisplay(this.#getDisplay() + " " + data.function + " ");
           break;
       }
