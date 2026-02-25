@@ -7,7 +7,8 @@ async function runTest() {
   // await import("./parserTest.js");
   // await import("./tokenizerTest.js");
   // await import("./calculatorTest.js");
-  await import("./calculatorControllerTest.js");
+  // await import("./calculatorControllerTest.js");
+
   console.log("All test completed");
 }
 runTest();

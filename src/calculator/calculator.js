@@ -1,3 +1,5 @@
+// This class is responsible for calculating the answer from the input string.
+// It uses the Evaluator, Parser and Tokenizer classes to perform the calculation.
 export default class Calculator {
   constructor(
     Evaluator,

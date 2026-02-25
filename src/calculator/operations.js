@@ -1,3 +1,4 @@
+import { factorial } from "../utils/uitls.js";
 // Mathematical operators, functions and constants used by the calculator.
 //
 // - lexerString: the exact characters as they appear in user input (or on buttons).
