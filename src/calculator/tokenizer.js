@@ -133,6 +133,22 @@ export default class Tokenizer {
         newIndex: startIndex + 1,
       };
     }
+    if (str[startIndex] === "+") {
+      if (this.#isNegative(tokens)) {
+        return {
+          accepted: true,
+          type: "OPERATOR",
+          value: "PLUS",
+          newIndex: startIndex + 1,
+        };
+      }
+      return {
+        accepted: true,
+        type: "OPERATOR",
+        value: "+",
+        newIndex: startIndex + 1,
+      };
+    }
 
     for (const operator of this.operators) {
       let lexerString = operator.lexerString;
