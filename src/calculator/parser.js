@@ -55,7 +55,11 @@ export default class Parser {
   // Handle operator tokens: enforce operand expectations and manage stack according to
   // operator precedence and associativity before pushing the incoming operator.
   #handleOperator(token, expectOperand) {
-    if (token.value !== "NEG" && expectOperand.value) {
+    if (
+      token.value !== "NEG" &&
+      token.value !== "PLUS" &&
+      expectOperand.value
+    ) {
       throw new Error("Parser : Operand expected");
     }
     if (token.value !== "!") {

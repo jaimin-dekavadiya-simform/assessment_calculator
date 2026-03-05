@@ -102,6 +102,7 @@ export default class CalculatorController {
           return;
       }
     }
+    this.#clearError();
     this.#handleInput(data);
     e.preventDefault();
   }
@@ -198,6 +199,7 @@ export default class CalculatorController {
   #toggleSign() {
     let str = this.display.innerHTML;
     if (isDigit(str[str.length - 1])) {
+      this.allowSubmit = true;
       let index = str.lastIndexOf(" ");
       if (str[index + 1] === "-") {
         str = str.slice(0, index + 1) + str.slice(index + 2);
@@ -205,6 +207,7 @@ export default class CalculatorController {
         str = str.slice(0, index + 1) + "-" + str.slice(index + 1);
       }
     } else if (str[str.length - 1] === " " && str[str.length - 2] === ")") {
+      this.allowSubmit = true;
       let index = str.length - 3;
       let openingBracketIndex;
       let counter = 1;
