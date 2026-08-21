@@ -1,0 +1,6 @@
+services:
+  calculator:
+    build: .
+    image: scientific-calculator:latest
+    ports:
+      - "8080:80"
