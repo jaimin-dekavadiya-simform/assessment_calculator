@@ -1,0 +1,3 @@
+# Document actual behaviour, not intended behaviour
+
+While documenting the calculator, the README and project brief were found to disagree with the code in several places (e.g. a claim of "no hardcoded logic", a listed `utils.js` where the file is actually `uitls.js`, and leftover debug logging). We decided the documentation must describe the code as it actually behaves and record discrepancies and quirks explicitly, rather than describing intended behaviour or silently reconciling the two. This keeps the documentation truthful and useful for maintainers and assessors, at the cost of surfacing rough edges that an intended-behaviour document would hide.

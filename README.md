@@ -68,11 +68,45 @@ This project is an assessment implementing modular, extensible scientific calcul
      ```
    - Reload the page to see test results in the browser console.
 
+## Run with Docker
+
+The app is served by nginx in a container, which is required because ES modules cannot be loaded over `file://`.
+
+**Prerequisites:** Docker (with Docker Compose) installed.
+
+**Option 1 — Docker Compose:**
+
+```bash
+docker compose up --build
+```
+
+Then open <http://localhost:8080>.
+
+Stop the container with `Ctrl+C`, and remove it with:
+
+```bash
+docker compose down
+```
+
+**Option 2 — Docker CLI:**
+
+```bash
+docker build -t scientific-calculator:latest .
+docker run -p 8080:80 scientific-calculator:latest
+```
+
+Then open <http://localhost:8080>.
+
+Full reference: [`docs/DOCKER.md`](docs/DOCKER.md) — files, image contents, healthcheck, and verified behaviour.
+
 ## Project Structure
 
 ```
 project-root/
 │
+├── .dockerignore
+├── docker-compose.yml
+├── Dockerfile
 ├── index.html
 ├── README.md
 │
