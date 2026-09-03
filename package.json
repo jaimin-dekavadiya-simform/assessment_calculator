@@ -1,0 +1,15 @@
+{
+  "name": "assessment-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Modular scientific calculator (browser) plus a zero-dependency Node HTTP API server.",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test server/test/health.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
