@@ -14,20 +14,38 @@
  *    Responds 200 {"operation","a","b","result"} on success, or 400
  *    {"error": "..."} when the body is malformed or fails validation
  *    (contract documented in docs/adr/0002-calculate-endpoint.md).
+ *  - POST /api/v1/evaluate -> safe evaluation of an arbitrary expression
+ *      { "expression": "<string>" }
+ *    Runs the app's own tokenizer/parser/evaluator pipeline (never eval) and
+ *    responds 200 {"expression","result"} on success, or 400
+ *    {"error": "INVALID_EXPRESSION" | "INVALID_INPUT"} when the expression
+ *    cannot be evaluated (contract documented in
+ *    docs/adr/0003-evaluate-endpoint.md).
  *
  * Run it directly:
  *   node server.js                 # http://127.0.0.1:3000
  *   PORT=8080 HOST=0.0.0.0 node server.js
  *
- * Use it as a library (see test/health.test.js and test/calculate.test.js):
+ * Use it as a library (see test/health.test.js, test/calculate.test.js and
+ * test/evaluate.test.js):
  *   import { createApp, startServer } from "./server.js";
  *
- * Only Node built-ins are used — no dependencies.
+ * Only Node built-ins are used — no dependencies. The calculator pipeline
+ * modules imported below are the browser app's own plain-ES-module source and
+ * touch no browser APIs, so they run unchanged under Node.
  */
 import http from "node:http";
 import path from "node:path";
 import { promises as fs } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+
+// Calculator pipeline (same modules the browser app uses — pure ES modules,
+// no DOM/localStorage, so safe to import server-side).
+import Evaluator from "./src/calculator/evaluator.js";
+import Parser from "./src/calculator/parser.js";
+import Tokenizer from "./src/calculator/tokenizer.js";
+import Stack from "./src/utils/stack.js";
+import { operators, functions, constants } from "./src/calculator/operations.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -45,6 +63,9 @@ const OPERATIONS = Object.freeze({
   multiply: (a, b) => a * b,
   divide: (a, b) => a / b,
 });
+
+/** Decimal places the expression evaluator rounds to (matches the browser app). */
+const EVALUATE_PRECISION = 15;
 
 /** Cap on request body size so a single connection cannot exhaust memory. */
 const MAX_REQUEST_BODY_BYTES = 1024 * 1024; // 1 MiB
@@ -157,10 +178,14 @@ async function handleRequest(req, res, root) {
     return;
   }
 
-  // JSON calculation API (POST). Everything else below is read-only
-  // static file serving, so it keeps the GET/HEAD gate.
+  // JSON API endpoints (POST). Everything else below is read-only static
+  // file serving, so it keeps the GET/HEAD gate.
   if (url.pathname === "/api/v1/calculate") {
     await handleCalculate(req, res);
+    return;
+  }
+  if (url.pathname === "/api/v1/evaluate") {
+    await handleEvaluate(req, res);
     return;
   }
 
@@ -186,6 +211,112 @@ async function handleRequest(req, res, root) {
   }
 
   await serveStaticFile(res, root, pathname, headOnly);
+}
+
+/**
+ * POST /api/v1/evaluate — evaluate one arithmetic/scientific expression
+ * string with the calculator's own Tokenizer -> Parser -> Evaluator pipeline.
+ * The expression is never run through eval().
+ *
+ * Request body (JSON): { expression }
+ *   expression: a string the browser calculator could evaluate
+ *     (numbers, + - * / % ^ !, parentheses, sin/cos/tan/log/ln/√,
+ *     π and e constants, unary minus, implicit multiplication)
+ *
+ * Response:
+ *   200 { expression, result } on success — `expression` is echoed exactly
+ *       as received, `result` is the numeric answer (rounded to the same 15
+ *       decimal places as the browser app)
+ *   400 { error: "INVALID_INPUT" }      when `expression` is missing or not
+ *       a JSON string
+ *   400 { error: "INVALID_EXPRESSION" } when `expression` is a string the
+ *       tokenizer/parser/evaluator reject (malformed syntax, unknown
+ *       characters, division by zero, math-domain errors, overflow to a
+ *       non-finite result, ...)
+ *   405 { error: "Method Not Allowed" } when the method is not POST
+ *   413 { error: "Payload Too Large" }  when the body exceeds 1 MiB
+ */
+async function handleEvaluate(req, res) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    sendJson(res, 405, { error: "Method Not Allowed" });
+    return;
+  }
+
+  let bodyText;
+  try {
+    bodyText = await readRequestBody(req);
+  } catch (err) {
+    if (err && err.code === "REQUEST_BODY_TOO_LARGE") {
+      sendJson(res, 413, { error: "Payload Too Large" });
+      return;
+    }
+    // Broken/incomplete request body: treat as not valid JSON.
+    sendJson(res, 400, { error: "Request body must be valid JSON" });
+    return;
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(bodyText);
+  } catch {
+    sendJson(res, 400, { error: "Request body must be valid JSON" });
+    return;
+  }
+
+  if (payload === null || typeof payload !== "object" || Array.isArray(payload)) {
+    sendJson(res, 400, { error: "Request body must be a JSON object" });
+    return;
+  }
+
+  const { expression } = payload;
+  if (typeof expression !== "string") {
+    sendJson(res, 400, { error: "INVALID_INPUT" });
+    return;
+  }
+
+  let result;
+  try {
+    result = evaluateExpression(expression);
+  } catch {
+    // Any tokenizer/parser/evaluator failure means the expression string
+    // itself is not a valid, evaluable expression.
+    sendJson(res, 400, { error: "INVALID_EXPRESSION" });
+    return;
+  }
+
+  // A syntactically valid expression can still overflow (e.g. 9^9^9).
+  // JSON.stringify would silently turn Infinity into null, so reject it.
+  if (!Number.isFinite(result)) {
+    sendJson(res, 400, { error: "INVALID_EXPRESSION" });
+    return;
+  }
+
+  sendJson(res, 200, { expression, result });
+}
+
+/**
+ * Run one expression string through the browser calculator's own pipeline:
+ * tokenize -> parse to RPN -> evaluate on a stack. Throws on any malformed
+ * or unevaluable expression.
+ *
+ * @param {string} expression
+ * @returns {number}
+ */
+function evaluateExpression(expression) {
+  const tokenizer = new Tokenizer(operators, functions, constants);
+  const parser = new Parser(operators, functions, constants, Stack);
+  const evaluator = new Evaluator(
+    operators,
+    functions,
+    constants,
+    Stack,
+    EVALUATE_PRECISION
+  );
+
+  const tokens = tokenizer.tokenize(expression);
+  const postfix = parser.parse(tokens);
+  return evaluator.evaluate(postfix);
 }
 
 /**
