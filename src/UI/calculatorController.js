@@ -1,4 +1,14 @@
 import { isDigit } from "../utils/uitls.js";
+import { requestCalculation } from "./apiClient.js";
+
+// UI operator characters -> operation names accepted by the calculate API
+// (see docs/adr/0002-calculate-endpoint.md).
+const BINARY_OPERATION_NAMES = {
+  "+": "add",
+  "-": "subtract",
+  "*": "multiply",
+  "/": "divide",
+};
 
 // Controller for the calculator UI: wires view, input, history and calculator logic.
 // Responsible for translating clicks/keys into tokens, updating display and managing history.
@@ -284,39 +294,115 @@ export default class CalculatorController {
     this.error = false;
   }
 
-  // Evaluate the current expression via calculator.calculate(), update history and display.
-  // Catches and classifies errors (Lexer/Parser/Evaluation/Operator) and sets appropriate messages.
+  // Evaluate the current expression and update display/history.
+  // Plain two-operand arithmetic (`a <op> b`) is sent to the calculate API via
+  // requestCalculation; anything else (functions, parentheses, chained
+  // operators, modulus, ...) is evaluated locally by the calculator engine.
+  // Display and history behavior is identical for both paths.
   #handleSubmit() {
     this.#clearError();
     const str = this.display.innerHTML;
     if (!this.allowSubmit) {
       return;
     }
+    const basicArithmetic = this.#parseBasicArithmetic(str);
+    if (basicArithmetic) {
+      this.#submitBasicArithmetic(str, basicArithmetic);
+      return;
+    }
+    this.#evaluateLocally(str);
+  }
+
+  // Evaluate an expression with the on-device calculator engine.
+  // Catches and classifies errors (Lexer/Parser/Evaluation/Operator) and sets
+  // the appropriate user-facing message.
+  #evaluateLocally(str) {
     try {
       const answer = this.calculator.calculate(str);
-      this.historyDisplay.innerHTML = this.display.innerHTML;
-      this.lastAnswer = answer;
-      this.display.innerHTML = answer;
-      if (!this.empty) {
-        this.history.push({ expression: str, answer: answer });
-      }
-      this.allowSubmit = false;
-      this.#displayHistory.call(this);
+      this.#finishCalculation(str, answer);
     } catch (e) {
-      if (e.message.startsWith("Parser")) {
-        this.display.innerHTML = "Invalid Expression";
-      } else if (e.message.startsWith("Evaluation")) {
-        this.display.innerHTML = "Invalid Expression";
-      } else if (e.message.startsWith("Operator")) {
-        this.display.innerHTML = "Math Error";
-      } else if (e.message.startsWith("Lexer")) {
-        this.display.innerHTML = "Invalid Input";
-      } else {
-        this.display.innerHTML = "Something Went Wrong";
-      }
-      console.error(e);
-      this.error = true;
+      this.#showCalculationError(e);
     }
+  }
+
+  // Submit a basic `a <op> b` expression to the calculate API and update
+  // display/history when it resolves. If the API cannot be reached the
+  // expression is evaluated locally instead, so behavior is unchanged when the
+  // app is opened without the server running.
+  async #submitBasicArithmetic(str, { operation, a, b }) {
+    try {
+      const answer = await requestCalculation(operation, a, b);
+      // Ignore the stale response if the user edited the display while the
+      // request was in flight.
+      if (this.display.innerHTML !== str) {
+        return;
+      }
+      // Mirror the on-device evaluator's 15-decimal rounding so the shown
+      // result (and history entry) stays identical to local evaluation.
+      this.#finishCalculation(str, Number(answer.toFixed(15)));
+    } catch (e) {
+      console.error(e);
+      // API failure (server unreachable, HTTP error such as division by
+      // zero): fall back to the local engine for identical behavior.
+      if (this.display.innerHTML === str) {
+        this.#evaluateLocally(str);
+      }
+    }
+  }
+
+  // Record a successful calculation: update the history preview line, store
+  // the answer, update the display, persist the history entry and refresh the
+  // history panel.
+  #finishCalculation(str, answer) {
+    this.historyDisplay.innerHTML = str;
+    this.lastAnswer = answer;
+    this.display.innerHTML = answer;
+    if (!this.empty) {
+      this.history.push({ expression: str, answer: answer });
+    }
+    this.allowSubmit = false;
+    this.#displayHistory();
+  }
+
+  // Show a user-friendly message for an evaluation error and enter the error
+  // state so the next key press starts fresh.
+  #showCalculationError(e) {
+    if (e.message.startsWith("Parser")) {
+      this.display.innerHTML = "Invalid Expression";
+    } else if (e.message.startsWith("Evaluation")) {
+      this.display.innerHTML = "Invalid Expression";
+    } else if (e.message.startsWith("Operator")) {
+      this.display.innerHTML = "Math Error";
+    } else if (e.message.startsWith("Lexer")) {
+      this.display.innerHTML = "Invalid Input";
+    } else {
+      this.display.innerHTML = "Something Went Wrong";
+    }
+    console.error(e);
+    this.error = true;
+  }
+
+  // When the display holds a plain `a <op> b` expression whose operator is one
+  // of the four the calculate API supports, return { operation, a, b } with
+  // the API's operation name; otherwise return null so the caller falls back
+  // to local evaluation.
+  #parseBasicArithmetic(str) {
+    const match = str
+      .trim()
+      .match(/^(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)$/);
+    if (!match) {
+      return null;
+    }
+    const operation = BINARY_OPERATION_NAMES[match[2]];
+    if (!operation) {
+      return null;
+    }
+    const a = Number(match[1]);
+    const b = Number(match[3]);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) {
+      return null;
+    }
+    return { operation, a, b };
   }
 
   // Render saved history items into the history panel.
