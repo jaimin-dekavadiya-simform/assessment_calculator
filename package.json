@@ -1,0 +1,23 @@
+{
+  "name": "scientific-calculator",
+  "version": "1.0.0",
+  "description": "Dependency-free Node server for the Scientific Calculator app: static file serving, a health endpoint, a JSON binary arithmetic API, and a safe expression evaluation API.",
+  "type": "module",
+  "private": true,
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/"
+  },
+  "keywords": [
+    "calculator",
+    "static-server",
+    "health-check",
+    "arithmetic-api",
+    "expression-evaluation"
+  ],
+  "license": "UNLICENSED"
+}
