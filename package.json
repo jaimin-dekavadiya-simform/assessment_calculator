@@ -1,0 +1,21 @@
+{
+  "name": "scientific-calculator",
+  "version": "1.0.0",
+  "description": "Static file server with a health endpoint for the Scientific Calculator app.",
+  "type": "module",
+  "private": true,
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/health.test.js"
+  },
+  "keywords": [
+    "calculator",
+    "static-server",
+    "health-check"
+  ],
+  "license": "UNLICENSED"
+}
