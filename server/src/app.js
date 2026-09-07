@@ -4,6 +4,7 @@ const morgan = require('morgan');
 
 const config = require('./config');
 const errorHandler = require('./middleware/errorHandler');
+const calculateRoutes = require('./routes/calculateRoutes');
 
 const app = express();
 
@@ -22,6 +23,8 @@ if (config.nodeEnv !== 'test') {
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+
+app.use(calculateRoutes);
 
 app.use(errorHandler);
 
