@@ -94,12 +94,25 @@ const operators = new Map([
   [
     "NEG",
     {
+      allowAtFront: true,
       lexerString: "-",
       tokenString: "NEG",
       precedence: 3,
       associativity: "right",
       arity: 1,
       execute: (a) => -a,
+    },
+  ],
+  [
+    "PLUS",
+    {
+      allowAtFront: true,
+      lexerString: "+",
+      tokenString: "PLUS",
+      precedence: 3,
+      associativity: "right",
+      arity: 1,
+      execute: (a) => a,
     },
   ],
   [

@@ -47,6 +47,7 @@ export default class Calculator {
     }
     // String to Infix
     const inFixExpression = tokenizer.tokenize(str);
+    console.log(inFixExpression);
     // Infix to Postfix
     const postFixExpression = parser.parse(inFixExpression);
     // Postfix to Answer

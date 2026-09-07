@@ -1,0 +1,124 @@
+openapi: 3.0.3
+info:
+  title: Calculator API
+  version: 1.0.0
+  description: HTTP API for the scientific calculator backend.
+servers:
+  - url: /
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      responses:
+        '200':
+          description: The service is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    const: ok
+              example:
+                status: ok
+  /api/v1/calculate:
+    post:
+      summary: Evaluate a mathematical expression
+      operationId: calculate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - expression
+              properties:
+                expression:
+                  type: string
+                  description: The mathematical expression to evaluate.
+              additionalProperties: true
+            examples:
+              simple:
+                summary: Basic arithmetic
+                value:
+                  expression: 2 + 3 * 4
+      responses:
+        '200':
+          description: The expression was evaluated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - expression
+                  - result
+                properties:
+                  expression:
+                    type: string
+                  result:
+                    type: number
+              example:
+                expression: 2 + 3 * 4
+                result: 14
+        '400':
+          description: The request was rejected.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validationError:
+                  summary: Missing or malformed expression
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Invalid expression
+                invalidExpression:
+                  summary: The expression could not be parsed
+                  value:
+                    error:
+                      code: INVALID_EXPRESSION
+                      message: Invalid expression
+                mathError:
+                  summary: The expression is mathematically undefined
+                  value:
+                    error:
+                      code: MATH_ERROR
+                      message: Division by zero
+        '500':
+          description: An unexpected server error occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Internal server error
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              enum:
+                - VALIDATION_ERROR
+                - INVALID_EXPRESSION
+                - MATH_ERROR
+                - INTERNAL_ERROR
+            message:
+              type: string
