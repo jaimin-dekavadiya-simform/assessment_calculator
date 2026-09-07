@@ -8,6 +8,10 @@ This project is an assessment implementing modular, extensible scientific calcul
 
 - [Click Here to Try the Calculator](https://jaimin-dekavadiya-simform.github.io/assessment_calculator/)
 
+## Backend API
+
+The repository also ships an Express backend under [`server/`](server/README.md) that exposes the same calculation engine as a stateless HTTP API. See [`server/README.md`](server/README.md) for setup, configuration, the API reference, and the expression grammar.
+
 ## Features
 
 - **Basic Arithmetic:** Addition, subtraction, multiplication, division, modulus.
