@@ -148,6 +148,10 @@ project-root/
 - **Extensibility:** New features can be added by extending Maps or adding new classes without modifying existing logic.
 - **Testability:** Each module is independently testable; see the `src/test/` directory for examples.
 
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
 ## Screenshots
 
 Light theme:
