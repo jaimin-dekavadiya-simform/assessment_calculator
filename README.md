@@ -157,3 +157,5 @@ Light theme:
 Dark theme:
 
 ![Dark theme](assets/dark-theme.png)
+
+Created by Jaimin Patel
